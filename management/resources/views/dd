@@ -1,0 +1,128 @@
+  <script type="text/javascript">
+    $(document).ready(function() {
+      $("#btnSubmit").click(function(event) {
+        //stop submit the form, we will post it manually.
+        event.preventDefault();
+        var form = $('#my-form')[0];
+        // FormData object 
+        var data = new FormData(form);
+        $.ajax({
+          type: "POST",
+          // enctype: 'multipart/form-data',
+          url: "task-post",
+          data: data,
+          processData: false,
+          contentType: false,
+          success: function(data) {
+            alert(data);
+          },
+        });
+      });
+    });
+  </script>
+
+
+
+
+$user = User::where('is_admin', '>', 0)->get();
+$selectedRole = User::where('is_admin', '<', 1)->get();
+$tt = DB::table('tasks')
+->select('staff_id', DB::raw("GROUP_CONCAT(task  SEPARATOR ',') as 'task'"))
+->groupBy('staff_id')
+->get();
+
+
+
+
+
+/* <div class="card bg-warning">
+              <div class="card-body text-center">
+                <h6>2</h6>
+                @foreach($task as $tasks)
+                @if($tasks->staff_id==2)
+                <!-- <p class="card-text">{{$tasks->staff_id}}</p> -->
+                <h5 class="card-title">{{$tasks->task}}</h5>
+                <a href="{{route('delete',$tasks->id)}}" class="btn bg-gradient-danger "><i class="fa fa-trash-o" aria-hidden="true"></i></a>
+                <a href="{{route('edit',$tasks->id)}}" class="btn bg-gradient-secondary "><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+                @endif
+                @endforeach
+              </div>
+            </div>
+
+            <div class="card bg-success">
+              <div class="card-body text-center">
+                <h6>3</h6>
+                @foreach($task as $tasks)
+                @if($tasks->staff_id==4)
+                <!-- <p class="card-text">{{$tasks->staff_id}}</p> -->
+                <h5 class="card-title">{{$tasks->task}}</h5>
+                <a href="{{route('delete',$tasks->id)}}" class="btn bg-gradient-danger "><i class="fa fa-trash-o" aria-hidden="true"></i></a>
+                <a href="{{route('edit',$tasks->id)}}" class="btn bg-gradient-secondary "><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+                @endif
+                @endforeach
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <br></br> */
+
+
+
+
+
+      $out=array();
+foreach($task as $x){
+  $out[$x['staff_id']]['staff_id']=$x['staff_id'];
+  $out[$x['staff_id']]['task']=$x['task'];
+  $out[$x['staff_id']]['done_at'][]=
+  array('task'=>$x['task'],'done-at'=>$x['done_at']);
+}
+
+
+<?php
+ 
+ $dataPoints = array(
+   array("label"=> "Code + Tea", "y"=> 590),
+   array("label"=> "Activities and Entertainments", "y"=> 261),
+   array("label"=> "Health and Fitness", "y"=> 158),
+   array("label"=> "Debbugging & testing", "y"=> 72),
+   array("label"=> "Error finding", "y"=> 191),
+   array("label"=> "R&D", "y"=> 573),
+   array("label"=> "Code testing", "y"=> 126)
+ );
+   
+ ?>
+  
+ <script>
+ window.onload = function () {
+  
+ var chart = new CanvasJS.Chart("chartContainer", {
+   animationEnabled: true,
+   exportEnabled: true,
+   title:{
+     text: "Average Expense Per Day  for Developers"
+   },
+   subtitles: [{
+     text: "Language Used: Developers (php)"
+   }],
+   data: [{
+     type: "pie",
+     showInLegend: "true",
+     legendText: "{label}",
+     indexLabelFontSize: 16,
+     indexLabel: "{label} - #percent%",
+     yValueFormatString: "฿#,##0",
+     dataPoints: <?php echo json_encode($dataPoints, JSON_NUMERIC_CHECK); ?>
+   }]
+ });
+ chart.render();
+  
+ }
+ </script>
+ 
+ 
+ <div id="chartContainer" style="height: 370px; width: 100%;"></div>
+ <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+ 
+ 
